@@ -6,4 +6,7 @@ public class SimpleDb {
 
     public void setDevMode(boolean mode) {
     }
+
+    public void run(String sql) {
+    }
 }
