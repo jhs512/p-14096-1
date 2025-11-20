@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 public class SimpleDbTest {
     private static SimpleDb simpleDb;
 
+    private static void createArticleTable() {
+    }
+
     @BeforeAll
     public static void beforeAll() {
         simpleDb = new SimpleDb("localhost", "root", "lldj123414", "simpleDb__test");
