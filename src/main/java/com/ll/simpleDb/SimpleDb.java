@@ -4,8 +4,8 @@ import lombok.Setter;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class SimpleDb {
     private final String url;
@@ -21,16 +21,22 @@ public class SimpleDb {
         this.password = password;
     }
 
-    public void run(String sql) {
+    // 가변 인자(Object... args)를 추가하여 파라미터 바인딩 지원
+    public void run(String sql, Object... args) {
         if (devMode) {
             System.out.println("SQL: " + sql);
         }
 
-        // try-with-resources를 사용하여 Connection과 Statement를 자동으로 닫습니다.
+        // PreparedStatement를 사용하여 ? 에 값을 채워넣습니다.
         try (Connection conn = DriverManager.getConnection(url, username, password);
-             Statement stmt = conn.createStatement()) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            stmt.execute(sql);
+            // 인자로 들어온 값들을 순서대로 바인딩 (index는 1부터 시작)
+            for (int i = 0; i < args.length; i++) {
+                pstmt.setObject(i + 1, args[i]);
+            }
+
+            pstmt.execute();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
