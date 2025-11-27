@@ -2,9 +2,12 @@ package com.ll.simpleDb;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.IntStream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SimpleDbTest {
     private static SimpleDb simpleDb;
@@ -61,7 +64,25 @@ public class SimpleDbTest {
     }
 
     @Test
-    void t1() {
+    @DisplayName("insert")
+    public void t001() {
+        Sql sql = simpleDb.genSql();
+        /*
+        == rawSql ==
+        INSERT INTO article
+        SET createdDate = NOW() ,
+        modifiedDate = NOW() ,
+        title = '제목 new' ,
+        body = '내용 new'
+        */
+        sql.append("INSERT INTO article")
+                .append("SET createdDate = NOW()")
+                .append(", modifiedDate = NOW()")
+                .append(", title = ?", "제목 new")
+                .append(", body = ?", "내용 new");
 
+        long newId = sql.insert(); // AUTO_INCREMENT 에 의해서 생성된 주키 리턴
+
+        assertThat(newId).isGreaterThan(0);
     }
 }
