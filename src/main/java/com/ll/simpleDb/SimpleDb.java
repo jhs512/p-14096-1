@@ -21,6 +21,14 @@ public class SimpleDb {
         this.password = password;
     }
 
+    public Sql genSql() {
+        return new Sql(this);
+    }
+
+    Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(url, username, password);
+    }
+
     // 가변 인자(Object... args)를 추가하여 파라미터 바인딩 지원
     public void run(String sql, Object... args) {
         if (devMode) {
