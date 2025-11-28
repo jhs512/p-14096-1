@@ -38,8 +38,35 @@ public class Sql {
         return this;
     }
 
+    public Sql execute() {
+        String sql = sqlBuilder.toString();
+
+        if (simpleDb.isDevMode()) {
+            System.out.println("SQL: " + sql);
+        }
+
+        try (Connection conn = simpleDb.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < params.size(); i++) {
+                pstmt.setObject(i + 1, params.get(i));
+            }
+
+            pstmt.execute();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return this;
+    }
+
     public long insert() {
         String sql = sqlBuilder.toString();
+
+        if (simpleDb.isDevMode()) {
+            System.out.println("SQL: " + sql);
+        }
 
         try (Connection conn = simpleDb.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
